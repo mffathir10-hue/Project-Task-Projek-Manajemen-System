@@ -2,8 +2,8 @@ package userservice
 
 import (
 	"errors"
-	models "gintugas/modules/components/userauth/models"
-	. "gintugas/modules/components/userauth/repository"
+	models "gintugas/modules/components/auth/models"
+	. "gintugas/modules/components/auth/repository"
 	"strings"
 
 	"github.com/gin-gonic/gin"

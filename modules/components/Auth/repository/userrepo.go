@@ -3,7 +3,7 @@ package userrepo
 import (
 	"database/sql"
 	"errors"
-	modelsuser "gintugas/modules/components/userauth/models"
+	modelsuser "gintugas/modules/components/auth/models"
 
 	"github.com/google/uuid"
 )

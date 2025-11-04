@@ -1,8 +1,8 @@
 package controllers
 
 import (
-	models "gintugas/modules/components/userauth/models"
-	utils "gintugas/modules/components/userauth/utils"
+	models "gintugas/modules/components/auth/models"
+	utils "gintugas/modules/components/auth/utils"
 	"net/http"
 
 	"github.com/gin-gonic/gin"

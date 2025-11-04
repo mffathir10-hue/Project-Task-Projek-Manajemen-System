@@ -3,10 +3,13 @@ package modules
 import (
 	"database/sql"
 	serviceroute "gintugas/modules/ServiceRoute"
+	services "gintugas/modules/components/Mail/service"
 	repositoryprojek "gintugas/modules/components/Project/repository"
 	servissprj "gintugas/modules/components/Project/service"
-	controllers "gintugas/modules/components/userauth/controller"
-	"gintugas/modules/components/userauth/middleware"
+	taskrepository "gintugas/modules/components/Tasks/repository"
+	taskservice "gintugas/modules/components/Tasks/service"
+	controllers "gintugas/modules/components/auth/controller"
+	"gintugas/modules/components/auth/middleware"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -17,6 +20,12 @@ func Initiator(router *gin.Engine, db *sql.DB, gormDB *gorm.DB) {
 
 	memberRepo := repositoryprojek.NewProjectMemberRepo(gormDB)
 	memberService := servissprj.NewProjectMemberService(memberRepo)
+
+	taskRepo := taskrepository.NewTaskRepository(gormDB)
+
+	mailService := services.NewMailService()
+	taskService := taskservice.NewTaskService(taskRepo, mailService)
+	taskController := serviceroute.NewTaskController(taskService)
 
 	api := router.Group("/api")
 	{
@@ -29,9 +38,6 @@ func Initiator(router *gin.Engine, db *sql.DB, gormDB *gorm.DB) {
 		auth.Use(middleware.AuthMiddleware())
 		{
 
-			auth.POST("/projects/:project_id/members", memberService.AddMember)
-			auth.GET("/projects/:project_id/members", memberService.GetProjectMembers)
-			auth.DELETE("/projects/:project_id/members/:user_id", memberService.RemoveMember)
 			// User routes
 			auth.GET("/users", serviceroute.GetAllUsersRouter(db))
 			auth.GET("/users/:id", serviceroute.GetUsersRouter(db))
@@ -44,6 +50,23 @@ func Initiator(router *gin.Engine, db *sql.DB, gormDB *gorm.DB) {
 			auth.GET("/project/:id", serviceroute.GetProjectRouter(db))
 			auth.PUT("/project/:id", serviceroute.UpdateProjectRouter(db))
 			auth.DELETE("/project/:id", serviceroute.DeleteProjectRouter(db))
+
+			member := auth.Group("/projects/:project_id/members")
+			{
+				member.POST("", memberService.AddMember)
+				member.GET("", memberService.GetProjectMembers)
+				member.DELETE("/:user_id", memberService.RemoveMember)
+			}
+
+			// Tasks Route
+			tasks := auth.Group("/projects/:project_id/tasks")
+			{
+				tasks.POST("", taskController.CreateTask)
+				tasks.GET("", taskController.GetProjectTasks)
+				tasks.GET("/:task_id", taskController.GetTaskByID)
+				tasks.PUT("/:task_id", taskController.UpdateTask)
+				tasks.DELETE("/:task_id", taskController.DeleteTask)
+			}
 		}
 
 	}

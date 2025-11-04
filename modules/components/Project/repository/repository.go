@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"errors"
 	. "gintugas/modules/components/Project/model"
-	. "gintugas/modules/components/userauth/models"
+	. "gintugas/modules/components/auth/models"
 
 	"github.com/google/uuid"
 )
