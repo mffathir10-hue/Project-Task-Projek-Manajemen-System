@@ -82,7 +82,7 @@ func (h *AuthHandler) Login(c *gin.Context) {
 		return
 	}
 
-	tokenString, err := utils.GenerateToken(user.ID)
+	tokenString, err := utils.GenerateToken(user.ID, user.Username, user.Role)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate token"})
 		return
@@ -95,7 +95,14 @@ func (h *AuthHandler) Login(c *gin.Context) {
 			"id":       user.ID,
 			"username": user.Username,
 			"email":    user.Email,
+			"role":     user.Role,
 		},
+	})
+}
+
+func (h *AuthHandler) Logout(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Successfully logged out",
 	})
 }
 
