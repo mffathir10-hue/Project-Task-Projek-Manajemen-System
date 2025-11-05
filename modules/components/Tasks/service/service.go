@@ -32,16 +32,69 @@ func NewTaskService(taskRepo taskrepository.TaskRepository, mailService MailServ
 	}
 }
 
+func (s *taskService) validateProjectManager(ctx *gin.Context, projectID uuid.UUID) error {
+	userID, exists := ctx.Get("user_id")
+	if !exists {
+		return errors.New("unauthorized: user tidak terautentikasi")
+	}
+
+	userIDStr, ok := userID.(string)
+	if !ok {
+		return errors.New("invalid user id format")
+	}
+
+	userUUID, err := uuid.Parse(userIDStr)
+	if err != nil {
+		return errors.New("invalid user id format: " + err.Error())
+	}
+
+	//cek user menejer dari proyek
+	project, err := s.taskRepo.GetProjectByID(projectID)
+	if err != nil {
+		return fmt.Errorf("gagal mengambil detail project: %v", err)
+	}
+
+	if project.ManagerID != userUUID {
+		return errors.New("forbidden: hanya manager project yang bisa melakukan operasi ini")
+	}
+
+	return nil
+}
+
+// user member dari projek
+func (s *taskService) validateProjectMember(projectID uuid.UUID, assigneeID uuid.UUID) error {
+	isMember, err := s.taskRepo.IsProjectMember(projectID, assigneeID)
+	if err != nil {
+		return fmt.Errorf("gagal memeriksa member project: %v", err)
+	}
+
+	if !isMember {
+		return errors.New("assignee harus menjadi member dari project ini")
+	}
+
+	return nil
+}
+
 func (s *taskService) CreateTask(ctx *gin.Context) (*taskmodel.TaskResponse, error) {
 	projectID := ctx.Param("project_id")
 	projectUUID, err := uuid.Parse(projectID)
 	if err != nil {
 		return nil, errors.New("Gagal format Project ID")
 	}
+	//cek menejer projek
+	if err := s.validateProjectManager(ctx, projectUUID); err != nil {
+		return nil, err
+	}
 
 	var taskReq taskmodel.TaskRequest
 	if err := ctx.ShouldBindJSON(&taskReq); err != nil {
 		return nil, err
+	}
+	//cek member dari projek
+	if taskReq.AssigneeID != nil {
+		if err := s.validateProjectMember(projectUUID, *taskReq.AssigneeID); err != nil {
+			return nil, err
+		}
 	}
 
 	task := &taskmodel.Task{
@@ -134,9 +187,19 @@ func (s *taskService) UpdateTask(ctx *gin.Context) (*taskmodel.TaskResponse, err
 		return nil, err
 	}
 
+	if err := s.validateProjectManager(ctx, existingTask.ProjectID); err != nil {
+		return nil, err
+	}
+
 	var taskReq taskmodel.TaskRequest
 	if err := ctx.ShouldBindJSON(&taskReq); err != nil {
 		return nil, err
+	}
+
+	if taskReq.AssigneeID != nil {
+		if err := s.validateProjectMember(existingTask.ProjectID, *taskReq.AssigneeID); err != nil {
+			return nil, err
+		}
 	}
 
 	if taskReq.Title != "" {
@@ -192,6 +255,15 @@ func (s *taskService) DeleteTask(ctx *gin.Context) error {
 	taskUUID, err := uuid.Parse(taskID)
 	if err != nil {
 		return errors.New("Gagal format task ID")
+	}
+
+	task, err := s.taskRepo.GetTaskByID(taskUUID)
+	if err != nil {
+		return err
+	}
+
+	if err := s.validateProjectManager(ctx, task.ProjectID); err != nil {
+		return err
 	}
 
 	return s.taskRepo.DeleteTask(taskUUID)

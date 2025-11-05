@@ -3,6 +3,8 @@ package modules
 import (
 	"database/sql"
 	serviceroute "gintugas/modules/ServiceRoute"
+	attachmentrepository "gintugas/modules/components/Attachments/repository"
+	attachmentservice "gintugas/modules/components/Attachments/service"
 	services "gintugas/modules/components/Mail/service"
 	repositoryprojek "gintugas/modules/components/Project/repository"
 	servissprj "gintugas/modules/components/Project/service"
@@ -32,6 +34,13 @@ func Initiator(router *gin.Engine, db *sql.DB, gormDB *gorm.DB) {
 	commentsRepo := NewCommentsRepository(gormDB)
 	commentsService := NewTaskService(commentsRepo)
 	commentsHandler := serviceroute.NewCommentsHandler(commentsService)
+
+	attachmentRepo := attachmentrepository.NewAttachmentRepository(gormDB)
+
+	//path menyimpan file
+	uploadPath := "./uploads/attachments"
+	attachmentService := attachmentservice.NewAttachmentService(attachmentRepo, uploadPath)
+	attachmentHandler := serviceroute.NewAttachmentHandler(attachmentService)
 
 	api := router.Group("/api")
 	{
@@ -82,6 +91,15 @@ func Initiator(router *gin.Engine, db *sql.DB, gormDB *gorm.DB) {
 				comments.GET("/:comments_id", commentsHandler.GetCommentsByID)
 				comments.PUT("/:comments_id", commentsHandler.UpdateComments)
 				comments.DELETE("/:comments_id", commentsHandler.DeleteComments)
+			}
+
+			attachments := auth.Group("")
+			{
+				//upload ke task berdasarkan id
+				attachments.POST("/tasks/:task_id/attachments", attachmentHandler.UploadAttachment)
+				attachments.GET("/tasks/:task_id/attachments", attachmentHandler.GetTaskAttachments)
+				attachments.DELETE("/attachments/:attachment_id", attachmentHandler.DeleteAttachment)
+				attachments.GET("/attachments/:attachment_id/download", attachmentHandler.DownloadAttachment)
 			}
 		}
 

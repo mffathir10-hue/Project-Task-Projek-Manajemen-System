@@ -20,6 +20,7 @@ type TaskRepository interface {
 	GetTasksByStatus(projectID uuid.UUID, status string) ([]taskmodel.Task, error)
 	GetUserByID(userID uuid.UUID) (*usermodels.User, error)
 	GetProjectByID(projectID uuid.UUID) (*projectmodel.Project, error)
+	IsProjectMember(projectID uuid.UUID, userID uuid.UUID) (bool, error)
 }
 
 type taskRepository struct {
@@ -96,4 +97,29 @@ func (r *taskRepository) GetProjectByID(projectID uuid.UUID) (*projectmodel.Proj
 		return nil, err
 	}
 	return &project, nil
+}
+
+func (r *taskRepository) IsProjectMember(projectID uuid.UUID, userID uuid.UUID) (bool, error) {
+	var project projectmodel.Project
+	err := r.db.First(&project, "id = ?", projectID).Error
+	if err != nil {
+		return false, err
+	}
+
+	//cek user menejer projk
+	if project.ManagerID == userID {
+		return true, nil
+	}
+
+	//cek user dimember projek
+	var count int64
+	err = r.db.Table("project_members").
+		Where("project_id = ? AND user_id = ?", projectID.String(), userID.String()).
+		Count(&count).Error
+
+	if err != nil {
+		return false, err
+	}
+
+	return count > 0, nil
 }
