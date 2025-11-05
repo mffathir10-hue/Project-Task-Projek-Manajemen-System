@@ -1,7 +1,7 @@
 package serviceroute
 
 import (
-	attachmentservice "gintugas/modules/components/Attachments/service"
+	attachmentservice "gintugas/modules/components/attachments/service"
 	"net/http"
 
 	"github.com/gin-gonic/gin"

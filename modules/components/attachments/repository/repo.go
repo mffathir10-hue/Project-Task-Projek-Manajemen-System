@@ -1,4 +1,4 @@
-package repository
+package aatrepo
 
 import (
 	attachmentmodel "gintugas/modules/components/Attachments/model"

@@ -1,4 +1,4 @@
-package model
+package aatmodel
 
 import (
 	taskmodel "gintugas/modules/components/Tasks/model"
