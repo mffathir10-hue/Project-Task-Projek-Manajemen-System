@@ -10,6 +10,8 @@ import (
 	taskservice "gintugas/modules/components/Tasks/service"
 	controllers "gintugas/modules/components/auth/controller"
 	"gintugas/modules/components/auth/middleware"
+	. "gintugas/modules/components/command/repository"
+	. "gintugas/modules/components/command/service"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -26,6 +28,10 @@ func Initiator(router *gin.Engine, db *sql.DB, gormDB *gorm.DB) {
 	mailService := services.NewMailService()
 	taskService := taskservice.NewTaskService(taskRepo, mailService)
 	taskController := serviceroute.NewTaskController(taskService)
+
+	commentsRepo := NewCommentsRepository(gormDB)
+	commentsService := NewTaskService(commentsRepo)
+	commentsHandler := serviceroute.NewCommentsHandler(commentsService)
 
 	api := router.Group("/api")
 	{
@@ -66,6 +72,16 @@ func Initiator(router *gin.Engine, db *sql.DB, gormDB *gorm.DB) {
 				tasks.GET("/:task_id", taskController.GetTaskByID)
 				tasks.PUT("/:task_id", taskController.UpdateTask)
 				tasks.DELETE("/:task_id", taskController.DeleteTask)
+			}
+
+			//Comments Route
+			comments := auth.Group("/tasks/:task_id/comments")
+			{
+				comments.POST("", commentsHandler.CreateComments)
+				comments.GET("", commentsHandler.GetTasksComments)
+				comments.GET("/:comments_id", commentsHandler.GetCommentsByID)
+				comments.PUT("/:comments_id", commentsHandler.UpdateComments)
+				comments.DELETE("/:comments_id", commentsHandler.DeleteComments)
 			}
 		}
 

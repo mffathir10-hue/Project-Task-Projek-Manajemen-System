@@ -24,8 +24,8 @@ type RegisterInput struct {
 
 // LoginInput untuk binding input login
 type LoginInput struct {
-	Username string `json:"username" binding:"required"`
-	Password string `json:"password" binding:"required"`
+	Identifier string `json:"cek" binding:"required"`
+	Password   string `json:"password" binding:"required"`
 }
 
 func NewAuthHandler(db *gorm.DB) *AuthHandler {
@@ -72,7 +72,7 @@ func (h *AuthHandler) Login(c *gin.Context) {
 	}
 
 	var user models.User
-	if err := h.DB.Where("username = ?", input.Username).First(&user).Error; err != nil {
+	if err := h.DB.Where("username = ? OR email = ?", input.Identifier, input.Identifier).First(&user).Error; err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
 		return
 	}
