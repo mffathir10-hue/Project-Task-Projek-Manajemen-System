@@ -1,10 +1,10 @@
-package aatserv
+package service
 
 import (
 	"errors"
 	"fmt"
-	attachmentmodel "gintugas/modules/components/Attachments/model"
 	taskmodel "gintugas/modules/components/Tasks/model"
+	attachmentmodel "gintugas/modules/components/attachments/models"
 	attachmentrepository "gintugas/modules/components/attachments/repository"
 	"mime/multipart"
 	"os"

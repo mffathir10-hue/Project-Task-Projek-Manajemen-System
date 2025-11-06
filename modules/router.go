@@ -3,6 +3,7 @@ package modules
 import (
 	"database/sql"
 	serviceroute "gintugas/modules/ServiceRoute"
+	controllers "gintugas/modules/components/Auth/controllers"
 	middleware "gintugas/modules/components/Auth/middleware"
 	role "gintugas/modules/components/Auth/middleware/middlewarerole"
 	services "gintugas/modules/components/Mail/service"
@@ -12,7 +13,6 @@ import (
 	taskservice "gintugas/modules/components/Tasks/service"
 	attachmentrepository "gintugas/modules/components/attachments/repository"
 	attachmentservice "gintugas/modules/components/attachments/service"
-	controllers "gintugas/modules/components/auth/controller"
 	. "gintugas/modules/components/command/repository"
 	. "gintugas/modules/components/command/service"
 

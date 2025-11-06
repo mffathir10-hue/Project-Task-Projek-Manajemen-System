@@ -1,8 +1,8 @@
 package projectrepo
 
 import (
+	models "gintugas/modules/components/Auth/model"
 	model "gintugas/modules/components/Project/model"
-	models "gintugas/modules/components/auth/models"
 
 	"gorm.io/gorm"
 )

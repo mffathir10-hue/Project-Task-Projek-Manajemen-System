@@ -1,7 +1,7 @@
 package projectmodel
 
 import (
-	usermodels "gintugas/modules/components/auth/models"
+	usermodels "gintugas/modules/components/Auth/model"
 	"time"
 
 	"github.com/google/uuid"

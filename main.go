@@ -63,8 +63,13 @@ func main() {
 
 func InitiateRouter(db *sql.DB, gormDB *gorm.DB) {
 	router := gin.Default()
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
 
 	routers.Initiator(router, db, gormDB)
 
-	router.Run(":" + os.Getenv("PORT"))
+	log.Printf("Server running on port %s", port)
+	router.Run(":" + port)
 }

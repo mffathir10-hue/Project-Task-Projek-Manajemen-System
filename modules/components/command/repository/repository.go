@@ -1,8 +1,8 @@
 package repository
 
 import (
+	usermodels "gintugas/modules/components/Auth/model"
 	taskmodel "gintugas/modules/components/Tasks/model"
-	usermodels "gintugas/modules/components/auth/models"
 	"gintugas/modules/components/command/model"
 
 	"github.com/google/uuid"

@@ -1,4 +1,4 @@
-package modelsuser
+package modeluser
 
 import (
 	"time"

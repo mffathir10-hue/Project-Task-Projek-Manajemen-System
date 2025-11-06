@@ -1,8 +1,8 @@
-package aatrepo
+package repository
 
 import (
-	attachmentmodel "gintugas/modules/components/Attachments/model"
 	taskmodel "gintugas/modules/components/Tasks/model"
+	attachmentmodel "gintugas/modules/components/attachments/models"
 
 	"github.com/google/uuid"
 	"gorm.io/gorm"

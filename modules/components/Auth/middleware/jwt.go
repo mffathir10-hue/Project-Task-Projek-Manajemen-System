@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	utils "gintugas/modules/components/auth/utils"
+	utils "gintugas/modules/components/Auth/util"
 	"net/http"
 	"strings"
 

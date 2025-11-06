@@ -1,8 +1,8 @@
 package model
 
 import (
+	usermodels "gintugas/modules/components/Auth/model"
 	taskmodel "gintugas/modules/components/Tasks/model"
-	usermodels "gintugas/modules/components/auth/models"
 	"time"
 
 	"github.com/google/uuid"

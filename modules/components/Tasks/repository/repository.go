@@ -1,9 +1,9 @@
 package taskrepository
 
 import (
+	usermodels "gintugas/modules/components/Auth/model"
 	projectmodel "gintugas/modules/components/Project/model"
 	taskmodel "gintugas/modules/components/Tasks/model"
-	usermodels "gintugas/modules/components/auth/models"
 
 	"github.com/google/uuid"
 	"gorm.io/gorm"

@@ -3,8 +3,8 @@ package serviceroute
 import (
 	"database/sql"
 	"fmt"
-	userrepo "gintugas/modules/components/auth/repository"
-	userservice "gintugas/modules/components/auth/service"
+	userrepo "gintugas/modules/components/Auth/repo"
+	userservice "gintugas/modules/components/Auth/service-user"
 	"net/http"
 
 	"github.com/gin-gonic/gin"

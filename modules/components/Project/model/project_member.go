@@ -1,6 +1,6 @@
 package projectmodel
 
-import . "gintugas/modules/components/auth/models"
+import . "gintugas/modules/components/Auth/model"
 
 type ProjectMember struct {
 	ProjectID string  `json:"project_id" gorm:"type:uuid;primaryKey"`

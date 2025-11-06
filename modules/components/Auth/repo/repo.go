@@ -1,9 +1,9 @@
-package userrepo
+package userepo
 
 import (
 	"database/sql"
 	"errors"
-	modelsuser "gintugas/modules/components/auth/models"
+	modelsuser "gintugas/modules/components/Auth/model"
 
 	"github.com/google/uuid"
 )
